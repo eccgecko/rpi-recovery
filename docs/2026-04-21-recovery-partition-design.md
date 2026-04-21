@@ -1,6 +1,6 @@
 ## Solution shape
 
-### 1 Chosen approach: Two-phase hybrid
+### 1. Chosen approach: Two-phase hybrid
 
 **Phase 1 — microSD recovery (remote-safe, deploy first):**
 Provision a dedicated microSD with Pi OS Lite + Tailscale + recovery-only SSH key. Physically insert on next on-site visit. Phase 1 completion means any sda failure is recoverable remotely.
@@ -10,7 +10,7 @@ Boot into phase-1 microSD to safely shrink `sda2` offline and create `sda3` (~50
 
 The microSD is **retained after phase 2** as an independent-failure-domain fallback for "sda is physically unreachable".
 
-### 2 Alternatives considered and rejected
+### 2. Alternatives considered and rejected
 
 | Option | Why rejected |
 |---|---|
@@ -20,7 +20,7 @@ The microSD is **retained after phase 2** as an independent-failure-domain fallb
 | D: B → A hybrid | Supplanted by F (E replaces A's ext4-root with a superior initramfs) |
 | E: Pure initramfs, no microSD | No disaster fallback for physical sda failure |
 
-### 3 Final on-disk layout
+### 3. Final on-disk layout
 
 ```
 sda (232.9 GB SATA SSD via USB3, MBR, unchanged scheme)
@@ -45,7 +45,7 @@ microSD (phase 1, retained indefinitely)
 
 MBR primaries used: 3 of 4. Fourth slot reserved.
 
-### 4 EEPROM configuration changes
+### 4. EEPROM configuration changes
 
 Applied via `sudo -E rpi-eeprom-config --edit`:
 
@@ -67,7 +67,7 @@ PARTITION_WALK=1                     # default-on since 2025-08-13, assert anywa
 
 `BOOT_ORDER` is deliberately unchanged — SD (`0x1`) already trails USB-MSD (`0x4`), so a fully-dead sda falls through to microSD naturally.
 
-### 5 config.txt changes (main, in `sda1/config.txt`)
+### 5. config.txt changes (main, in `sda1/config.txt`)
 
 Appended under the existing `[all]` section:
 
@@ -80,7 +80,7 @@ kernel_watchdog_partition=3          # runtime wedge → reboot into sda3 recove
 
 **Interaction with existing systemd watchdog:** `kernel_watchdog_timeout` arms `/dev/watchdog0` early (before systemd). When systemd starts it opens the device and takes over petting; the `open_timeout` simply closes the pre-systemd gap. No conflict. OMV's `RuntimeWatchdogSec=14s` continues to govern runtime behaviour unchanged.
 
-### 6 New file: `sda1/autoboot.txt`
+### 6. New file: `sda1/autoboot.txt`
 
 ```ini
 [all]
@@ -91,7 +91,7 @@ boot_partition=1
 boot_partition=3
 ```
 
-### 7 Trigger chain (resulting boot paths)
+### 7. Trigger chain (resulting boot paths)
 
 | # | Trigger | Boot mode | Partition resolution | Outcome |
 |---|---------|-----------|----------------------|---------|
