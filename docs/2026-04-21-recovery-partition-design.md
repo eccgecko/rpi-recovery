@@ -1,6 +1,6 @@
 ## Solution shape
 
-### 1 Chosen approach: F (two-phase hybrid)
+### 1 Chosen approach: Two-phase hybrid
 
 **Phase 1 — microSD recovery (remote-safe, deploy first):**
 Provision a dedicated microSD with Pi OS Lite + Tailscale + recovery-only SSH key. Physically insert on next on-site visit. Phase 1 completion means any sda failure is recoverable remotely.
@@ -91,7 +91,7 @@ boot_partition=1
 boot_partition=3
 ```
 
-### 3.7 Trigger chain (resulting boot paths)
+### 7 Trigger chain (resulting boot paths)
 
 | # | Trigger | Boot mode | Partition resolution | Outcome |
 |---|---------|-----------|----------------------|---------|
